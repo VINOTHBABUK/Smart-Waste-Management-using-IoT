@@ -1,0 +1,17 @@
+
+Project order
+
+Homepage.html
+Dsahboard.Html
+address_detail(2).html
+
+pending
+
+login
+contact us
+dustbin level in address detail page
+map integration//comleted
+
+calculation
+
+percentage = (Maximum_value - Sensor_reading) / (Maximum_value)) * 100

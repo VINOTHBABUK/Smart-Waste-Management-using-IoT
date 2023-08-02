@@ -1,0 +1,70 @@
+#include <FirebaseESP8266.h>
+#include <ESP8266WiFi.h>
+
+#include <ArduinoJson.h>
+
+// Wi-Fi credentials
+const char* ssid = "mr kumar";
+const char* password = "";
+
+// Firebase credentials
+const char* firebaseHost = "dustbin-monitor-1102f-default-rtdb.firebaseio.com";
+const char* firebaseAuth = "SR3wxECdNbiPGW65naUt8vLDupUhgy6qg9JEyoK1";
+
+// Ultrasonic sensor pins
+const int trigPin = 4; // GPIO 4
+const int echoPin = 0; // GPIO 3
+
+// Firebase database path
+const String databasePath = "/sensor/Level";
+
+// Firebase object
+FirebaseData firebaseData;
+
+void setup() {
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(100);
+  }
+
+  // Initialize Firebase
+  Firebase.begin(firebaseHost, firebaseAuth);
+
+  // Set ultrasonic sensor pins as input/output
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  // Start serial communication
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Trigger the ultrasonic sensor
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Measure the echo time to calculate distance
+  long duration = pulseIn(echoPin, HIGH);
+  int level = duration * 0.034 / 2;  // Calculate level in cm
+//  int Maximum_value=14;
+//   int percentage = ((Maximum_value - level) / Maximum_value) * 100;
+
+  // Send level value to Firebase
+  if (Firebase.setInt(firebaseData, databasePath, level)) {
+    Serial.print("Level sent to Firebase: ");
+    Serial.println(level);
+  } else {
+    Serial.println("Fireba : " + firebaseData.errorReason());
+    Serial.println(level);
+  }
+
+  delay(100);
+}
+
+
+
+o.rkKhc77KKmGtTWW5Hgd4hyIntsAhIu70

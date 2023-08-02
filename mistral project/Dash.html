@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Automatic Image Slider</title>
+    <style>
+  body{
+    background: rgb(255,255,255);
+    background: linear-gradient(90deg, rgba(255,255,255,1) 68%, rgba(248,238,180,1) 100%);
+}
+header {
+    /* background-color: #f2f2f2; */
+    /* background-color: #f8f9d2; background-image: linear-gradient(315deg, #f8f9d2 0%, #e8dbfc 74%);*/
+    padding: 0%; 
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    
+    
+  }
+  
+  .logo img {
+    height: 10px;
+    width: 10px;
+    margin-left: 40px;
+    margin-bottom: 10px;
+  }
+  
+  nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    margin-left: 180px;
+    margin-top: 10px;
+  }
+  
+  nav ul li {
+    display: inline;
+    margin-left: 100px;
+  }
+  
+  nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+  }
+
+.slider-container {
+    max-width: 800px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.slider {
+    display: flex;
+    animation: slide 5s infinite; /* Adjust the duration as needed */
+}
+
+@keyframes slide {
+    0% {
+        transform: translateX(0);
+    }
+    33.33% {
+        transform: translateX(-100%);
+    }
+    66.66% {
+        transform: translateX(-200%);
+    }
+    100% {
+        transform: translateX(-300%);
+    }
+}
+
+.slider img {
+    width: 100%;
+    height: 300px; /* Set the desired height for your images */
+    object-fit: cover;
+}
+.grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+      
+    }
+    
+    .grid-box {
+      text-align: center;
+      border: 3px solid #ccc;
+      padding: 5px;
+      border-radius: 10px;
+      width: 280px;
+      margin-left: 70px;
+    }
+    
+    .grid-box img {
+      max-width: 150px;
+      height: 150px;
+    }
+    
+    .grid-box span {
+      font-size: 24px;
+      font-weight: bold;
+      margin-left: 50px;
+      text-align: center;
+    }
+    img {
+            max-width: 100%;
+            height: auto;
+        }
+    .center {
+     position: absolute;
+     top: 78%;
+     left: 19%;
+     font-size: 30px;
+     font-family: 'Poppins';
+    transform: translate(-50%, -50%);
+}
+    .centered {
+     position: absolute;
+     top: 78%;
+     left: 52%;
+     font-size: 30px;
+     font-family: 'Poppins';
+     transform: translate(-50%, -50%);
+}
+.cent{
+     position: absolute;
+     top: 78%;
+     left: 85%;
+     font-size: 30px;
+     font-family: 'Poppins';
+     transform: translate(-50%, -50%);
+}
+@media only screen and (max-width: 768px) {
+            
+            nav ul {
+                margin-left: 40px;
+                font-size: 16px;
+            }
+            nav ul li {
+                margin-left: 40px;
+            }
+            
+            .slider img {
+                height: 200px;
+            }
+            
+            .grid-box {
+                width: 200px;
+                margin-left: 20px;
+            }
+           
+            .grid-box span {
+                font-size: 18px;
+            }
+           
+            .center, .centered, .cent {
+                font-size: 24px;
+                top: 70%;
+            }
+        }
+
+        #statusTable {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 auto; 
+}
+
+#statusTable th, #statusTable td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+#statusTable th {
+  background-color: #f2f2f2;
+}
+
+
+#statusTable tr[data-status="Low"] {
+  background-color: #ffe54e;
+}
+
+
+#statusTable tr[data-status="Low"] td {
+  color: #9f1e1e;
+}
+
+/* Adjust font size for the table */
+#statusTable th, #statusTable td {
+  font-size: 16px;
+}
+
+.table-container {
+        max-width: 800px;
+        margin: 0 auto; 
+        padding: 80px; 
+      }
+
+    </style>
+</head>
+<body>
+    
+    <header>
+        <div class="logo">
+          <img src="logo.png" alt="Logo">
+        </div>
+        <nav>
+          <ul>
+            <li><a href="Homepage.html">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="k.html">Dashboard</a></li>
+          </ul>
+        </nav>
+      </header>
+    <div class="slider-container">
+        <div class="slider">
+            <img src="slider1.jpg" alt="Image 1">
+            <img src="slider2.jpg" alt="Image 2">
+            <img src="slider3.jpg" alt="Image 3">
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="grid-box" style="background-image: linear-gradient(315deg, #f8f9d2 0%, #FFE54E 74%)">
+          <img  id="myImage"src="Bin1.png" alt="Grid Image 1" >
+          <div id="centered">1</div>
+        </div>
+        <div class="grid-box" style="background-image: linear-gradient(315deg, #f8f9d2 0%, #9F1E1E 74%)">
+          <img  id="myImage1" src="Bin2.png" alt="Grid Image 2">
+          <div class="centered">2</div>
+          
+        </div>
+        <div class="grid-box"  style="background-image: linear-gradient(315deg, #f8f9d2 0%, #416F39 74%)">
+          <img id="myImage2" src="Bin3.png" alt="Grid Image 3">
+          <div class="cent">3</div>
+          
+        </div>
+      </div>
+      <div class="table-container">
+      <div style="max-width: 600px;">
+        <table id="statusTable" style="margin: 0 auto;">
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </table>
+      </div>
+    </div>
+      <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-app.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-database.js"></script>
+
+      <script>
+
+const firebaseConfig = {
+        apiKey: "AIzaSyCEsylIm412gqUfcc9gnPTMmHJbX0O0KaE",
+        authDomain: "dustbin-monitor-1102f.firebaseapp.com",
+        databaseURL: "https://dustbin-monitor-1102f-default-rtdb.firebaseio.com",
+        projectId: "dustbin-monitor-1102f",
+        storageBucket: "dustbin-monitor-1102f.appspot.com",
+        messagingSenderId: "5065718611",
+        appId: "1:5065718611:web:1aa84f7f92744a7f8e3fa6",
+        measurementId: "G-YGTVSNME62"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    
+    const db = firebase.database();
+
+   
+    function displayStatusTable(status) {
+      const table = document.getElementById("statusTable");
+      table.innerHTML = "";
+
+      
+      while (table.rows.length > 1) {
+        table.deleteRow(1); 
+      }
+
+      
+      db.ref("area_detail")
+        .orderByChild("Status")
+        .equalTo(status)
+        .once("value")
+        .then((snapshot) => {
+          let sno = 1; 
+          const headerRow = table.insertRow(0);
+      const headers = ["Sno", "Address", "City", "Level", "Weight", "Status"];
+      headers.forEach((headerText) => {
+        const headerCell = document.createElement("th");
+        headerCell.textContent = headerText;
+        headerRow.appendChild(headerCell);
+      });
+
+          snapshot.forEach((childSnapshot) => {
+            const key = childSnapshot.key; 
+            const data = childSnapshot.val();
+            const { Address, City, Level, Weight, Status } = data;
+
+            
+            const newRow = table.insertRow(-1); 
+            newRow.innerHTML = `
+              <td>${sno++}</td>
+              <td>${Address}</td>
+              <td>${City}</td>
+              <td>${Level}</td>
+              <td>${Weight}</td>
+              <td>${Status}</td>
+            `;
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    }
+    
+
+
+         const myImage = document.getElementById("myImage");
+
+       
+        myImage.addEventListener("click", () => {
+          displayStatusTable('Low');
+          alert("image is clicked");
+          
+});
+
+myImage1.addEventListener("click", () => {
+ // var value=toLowerCase("SANTHA");
+  //onsole.log(value);
+  
+          displayStatusTable("Medium");
+         
+          
+});
+myImage2.addEventListener("click", () => {
+ // var value=toLowerCase("SANTHA");
+  //onsole.log(value);
+  alert("image is clicked");
+          displayStatusTable("High");
+          
+});
+
+      </script>
+
+   
+</body>
+</html>

@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Notification Counter</title>
+  <style>
+    /* Position the notification counter on top of the image */
+    #notification-container {
+      position: relative;
+      display: inline-block;
+    }
+    #notification-image{
+  width: 50px;
+  height: 50px;
+  padding-left:1200px;
+}
+
+    #notification-counter {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: rgb(236, 11, 11);
+      color: white;
+      padding: 5px;
+      border-radius: 50%;
+    }
+
+    #notification-message {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(236, 11, 11, 0.7);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    #address-container {
+      display: none;
+      margin-top: 0px;
+      margin-left: 1050px;
+      margin-right: 20px;
+
+      padding: 6px;
+      width: 260px;
+      height: 400px;
+      border: 5px solid #f80707;
+    }
+    #address-box {
+      display: inline-block;
+      background-color: #fa0505;
+      padding: 5px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="notification-container">
+    <img id="notification-image" src="notifiaction.png" alt="Notification">
+    <span id="notification-counter">0</span>
+    <div id="notification-message">Value is above 75%!</div>
+  </div>
+  <div id="address-container">
+    <div id="address-box"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.3.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.3.3/firebase-database.js"></script>
+  
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCEsylIm412gqUfcc9gnPTMmHJbX0O0KaE",
+        authDomain: "dustbin-monitor-1102f.firebaseapp.com",
+        databaseURL: "https://dustbin-monitor-1102f-default-rtdb.firebaseio.com",
+        projectId: "dustbin-monitor-1102f",
+        storageBucket: "dustbin-monitor-1102f.appspot.com",
+        messagingSenderId: "5065718611",
+        appId: "1:5065718611:web:1aa84f7f92744a7f8e3fa6",
+        measurementId: "G-YGTVSNME62"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    let notificationCounter = 0;
+    let isValueAbove75 = false;
+    let binAddress = " K.R.NAGAR Bin Level Reach 75% more"; 
+
+    function showNotification() {
+      const notificationCounterElement = document.getElementById('notification-counter');
+
+      if (notificationCounter > 0) {
+        notificationCounterElement.textContent = notificationCounter;
+        notificationCounter++;
+
+        if (isValueAbove75 && notificationCounter === 11) {
+          const notificationMessage = document.getElementById('notification-message');
+          notificationMessage.style.display = 'block';
+          notificationCounter = 0;
+        }
+      }
+    }
+
+    const levelRef = database.ref("sensor/Level");
+    const addressRef = database.ref("sensor/Address");
+
+    levelRef.on("value", (snapshot) => {
+      const value = snapshot.val();
+      if (value > 75) {
+        isValueAbove75 = true;
+        notificationCounter = 1;
+        showNotification();
+      } else {
+        isValueAbove75 = false;
+        const notificationMessage = document.getElementById('notification-message');
+        notificationMessage.style.display = 'none'; 
+      }
+    });
+
+    addressRef.on("value", (snapshot) => {
+      binAddress = snapshot.val() || " K.R.NAGAR Bin Level Reach 75% more";
+      const addressBox = document.getElementById('address-box');
+      addressBox.textContent = binAddress;
+    });
+
+    function resetCounter() {
+      notificationCounter = 0;
+      const notificationCounterElement = document.getElementById('notification-counter');
+      notificationCounterElement.textContent = 0;
+
+      const notificationMessage = document.getElementById('notification-message');
+      notificationMessage.style.display = 'none';
+    }
+
+    function showAddress() {
+      const addressContainer = document.getElementById('address-container');
+      if (isValueAbove75) {
+        if (addressContainer.style.display === 'block') {
+          addressContainer.style.display = 'none';
+        } else {
+          addressContainer.textContent = binAddress;
+          addressContainer.style.display = 'block';
+        }
+      }
+    }
+
+    const notificationImage = document.getElementById('notification-image');
+    notificationImage.addEventListener('click', showAddress);
+  </script>
+</body>
+</html>

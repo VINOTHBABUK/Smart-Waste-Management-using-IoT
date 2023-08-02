@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Count Display</title>
+</head>
+<body>
+  <h2>Count Display</h2>
+  <div>
+    <p>Low Count: <span id="lowCount">0</span></p>
+    <p>Medium Count: <span id="mediumCount">0</span></p>
+    <p>High Count: <span id="highCount">0</span></p>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  
+
+  
+  <script>
+    var firebaseConfig = {
+        apiKey: "AIzaSyCEsylIm412gqUfcc9gnPTMmHJbX0O0KaE",
+    authDomain: "dustbin-monitor-1102f.firebaseapp.com",
+    databaseURL: "https://dustbin-monitor-1102f-default-rtdb.firebaseio.com",
+    projectId: "dustbin-monitor-1102f",
+    storageBucket: "dustbin-monitor-1102f.appspot.com",
+    messagingSenderId: "5065718611",
+    appId: "1:5065718611:web:1aa84f7f92744a7f8e3fa6",
+    measurementId: "G-YGTVSNME62"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const areaDetailRef = db.ref('area_detail');
+
+function updateCounts() {
+  areaDetailRef.once('value')
+    .then(snapshot => {
+      let lowCount = 0;
+      let mediumCount = 0;
+      let highCount = 0;
+
+      const areaDetailData = snapshot.val() || {};
+
+      Object.values(areaDetailData).forEach(item => {
+        const status = item.Status;
+
+        if (status.toLowerCase() === 'low') {
+          lowCount++;
+        } else if (status.toLowerCase() === 'medium') {
+          mediumCount++;
+        } else if (status.toLowerCase() === 'high') {
+          highCount++;
+        }
+      });
+
+      document.getElementById('lowCount').textContent = lowCount;
+      document.getElementById('mediumCount').textContent = mediumCount;
+      document.getElementById('highCount').textContent = highCount;
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
+}
+
+function updateCountsEvery5Seconds() {
+  updateCounts();
+  setTimeout(updateCountsEvery5Seconds, 5000); 
+}
+
+
+updateCountsEvery5Seconds();
+
+  </script>
+</body>
+</html>

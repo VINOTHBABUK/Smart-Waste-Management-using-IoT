@@ -1,0 +1,51 @@
+ph number:+14707458135
+id:AC8ce96fce0e8e04e7a8eb80beb83cd004
+Auth Token:ff98ec0cd5e7bb299357d347898a8739
+
+
+// index.js
+const admin = require('firebase-admin');
+const twilio = require('twilio');
+
+// Initialize Firebase Admin SDK
+const serviceAccount = require('./path/to/serviceAccountKey.json'); // Replace with the actual path to your service account key JSON file
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://your-firebase-project.firebaseio.com' // Replace with your Firebase database URL
+});
+
+// Initialize Twilio
+const twilioAccountSid = 'YOUR_TWILIO_ACCOUNT_SID';
+const twilioAuthToken = 'YOUR_TWILIO_AUTH_TOKEN';
+const twilioPhoneNumber = 'YOUR_TWILIO_PHONE_NUMBER';
+
+const twilioClient = twilio(twilioAccountSid, twilioAuthToken);
+
+// Reference to the value in Firebase
+const db = admin.database();
+const valueRef = db.ref('example/value'); // Replace with the path to the value in your Firebase database
+
+// Function to send SMS using Twilio
+function sendSMS(recipientPhoneNumber, message) {
+  twilioClient.messages
+    .create({
+      body: message,
+      from: twilioPhoneNumber,
+      to: recipientPhoneNumber
+    })
+    .then(message => console.log(`SMS sent. SID: ${message.sid}`))
+    .catch(error => console.error(`Failed to send SMS: ${error.message}`));
+}
+
+// Listen to changes in the value
+valueRef.on('value', snapshot => {
+  const value = snapshot.val();
+
+  if (value > 75) {
+    const recipientPhoneNumber = '+1234567890'; // Replace with the recipient's phone number
+    const message = `The value is above 75! Current value: ${value}`;
+    sendSMS(recipientPhoneNumber, message);
+  }
+});
+
+console.log('Listening for changes in the value...');

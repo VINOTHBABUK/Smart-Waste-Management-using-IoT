@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Data Table</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 20px;
+    padding: 20px;
+}
+
+.grid-item {
+    background-color: #f0f0f0;
+    padding: 20px;
+    text-align: center;
+    font-size: 18px;
+    height: 250px;
+}
+
+.bar-chart, .line-chart {
+    width: 100%;
+    height: 200px;
+}
+.dustbin {
+    width: 200px;
+    height: 250px;
+    position: relative;
+    border: 2px solid black;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-left: 150px;
+  }
+  
+  .lid {
+    width: 100%;
+    height: 30px;
+    
+    position: absolute;
+    top: 0;
+  }
+  
+  #bin {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-radius: 0 0 10px 10px;
+  }
+  
+  .blue-fill {
+    background-color: blue !important;
+  }
+
+  .red-fill {
+    background-color: red !important;
+  }
+
+  .percentage{
+    padding-left: 220px;
+    margin-top: -160px;
+  }
+  .num{
+    margin-top: 150px;
+  }
+  
+  
+
+.line-chart-container {
+    width: 100%;
+    max-width:px;
+    height: 300px;
+}
+@media screen and (max-width: 767px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    nav ul li a {
+        font-size: 16px;
+    }
+    .grid-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    #formContainer {
+        width: 80%;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    nav ul li a {
+        font-size: 18px;
+    }
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    #formContainer {
+        width: 30vw;
+    }
+}
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    #formContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(36, 36, 36, 0.315);
+      position: absolute;
+      inset: 0;
+    }
+
+    form{
+      width: 30vw;
+      background-color: white;
+      padding: 1rem;
+    }
+
+    #formContainer label {
+      font-weight: bold;
+    }
+
+    #formContainer input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+    }
+
+    #formContainer button[type="submit"] {
+      padding: 0.5rem 1rem;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #formContainer button[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    header {
+ /* // background-color: #f2f2f2;  */
+   /* background-color: #f8f9d2; background-image: linear-gradient(315deg, #f8f9d2 0%, #e8dbfc 74%); */
+  padding: 0%; 
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  
+  
+} 
+
+.logo img {
+  height: 150px; 
+  width: 170px; 
+  margin: 10px; 
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  margin-left: 180px;
+  margin-top: 10px;
+}
+
+nav ul li {
+  display: inline;
+  margin-left: 100px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="bin-monitoring-logo-removebg-preview (1).png" alt="Logo">
+    </div>
+    <nav>
+      <ul>
+        <li><a href="Homepage.html">Home</a></li>
+        <li><a href="Map.html">Map</a></li>
+        <li><a href="Dash.html">Dashboard</a></li>
+      </ul>
+    </nav>
+  </header>
+  <a id="top"></a>
+  <div class="grid-container">
+    <div class="grid-item">
+        <canvas class="bar-chart" id="barChart1"></canvas>
+    </div>
+    <div class="grid-item">
+        <canvas class="bar-chart" id="barChart2"></canvas>
+    </div>
+    <div class="grid-item">
+        <canvas class="bar-chart" id="barChart3"></canvas>
+    </div>
+    <div class="grid-item">
+      <div class="dustbin">
+        <div class="lid"></div>
+        <div class="bin" id="bin"></div>
+      </div>
+      <div class="percentage" id="percentage">0%</div>
+    </div>
+    
+</div>
+<div class="grid-container">
+    <div class="grid-item line-chart-container">
+        <canvas class="line-chart" id="lineChart"></canvas>
+    </div>
+</div>
+
+
+  <tr id="dropdownRow" style="display: none;">
+    <th></th>
+    <th></th>
+    <th>
+      <select id="cityDropdown">
+        <option value="">All Cities</option>
+      </select>
+    </th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+    <button id="addButton">Add Data</button>
+  <table>
+    <thead>
+      <tr>
+        <th>Sno</th>
+        <th>Address</th>
+        <th>City</th>
+        <th>Level</th>
+        <th>Weight</th>
+        <th>Status</th>
+      </tr>
+      
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  
+  <div id="formContainer"  style="display: none;">
+    <form id="dataForm">
+      <label for="address">Address:</label>
+      <input type="text" id="address" name="address"><br>
+
+      <label for="city">City:</label>
+      <input type="text" id="city" name="city"><br>
+
+      <label for="level">Level:</label>
+      <input type="text" id="level" name="level"><br>
+
+      <label for="weight">Weight:</label>
+      <input type="text" id="weight" name="weight"><br>
+
+      <label for="status">Status:</label>
+      <input type="text" id="status" name="status"><br>
+
+      <button type="submit">Submit</button>
+      <button class="can" type="reset">cancel</button>
+    </form>
+  </div>
+
+  
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <script>
+    const firebaseConfig = {
+    apiKey: "AIzaSyCEsylIm412gqUfcc9gnPTMmHJbX0O0KaE",
+    authDomain: "dustbin-monitor-1102f.firebaseapp.com",
+    databaseURL: "https://dustbin-monitor-1102f-default-rtdb.firebaseio.com",
+    projectId: "dustbin-monitor-1102f",
+    storageBucket: "dustbin-monitor-1102f.appspot.com",
+    messagingSenderId: "5065718611",
+    appId: "1:5065718611:web:1aa84f7f92744a7f8e3fa6",
+    measurementId: "G-YGTVSNME62"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const barChartCanvas1 = document.getElementById("barChart1");
+    const barChartCanvas2 = document.getElementById("barChart2");
+    const barChartCanvas3 = document.getElementById("barChart3");
+    //const barChartCanvas4 = document.getElementById("barChart4");
+    const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+    y: {
+      beginAtZero: true
+    }
+  }
+};
+    
+
+    function fetchCityDropdownValues() {
+    const cityDropdown = document.getElementById("cityDropdown");
+    const areaDetailRef = database.ref("area_detail");
+    areaDetailRef.once("value", (snapshot) => {
+    const uniqueCities = new Set();
+      snapshot.forEach((childSnapshot) => {
+      const data = childSnapshot.val();
+      const city = data.City;
+      if (city) {
+        uniqueCities.add(city);
+      }
+    });
+    uniqueCities.forEach((city) => {
+      const option = document.createElement("option");
+      option.value = city;
+      option.textContent = city;
+      cityDropdown.appendChild(option);
+    });
+    const dropdownRow = document.getElementById("dropdownRow");
+    dropdownRow.style.display = "table-row";
+  });
+}
+fetchCityDropdownValues();
+function filterTableByCity(selectedCity) {
+  const rows = table.querySelectorAll("tr");
+  let filteredRowCounter = 0;
+  rows.forEach((row, index) => {
+    const cityCell = row.querySelector("td:nth-child(3)");
+    const cityName = cityCell.textContent.trim();
+
+    
+      if (selectedCity === "" || selectedCity === cityName) {
+        row.style.display = "table-row";
+
+        const snoCell = row.querySelector("td:nth-child(1)");
+        snoCell.textContent = ++filteredRowCounter;
+      } else {
+        row.style.display = "none";
+      }
+    
+  });
+}
+    const table = document.querySelector("table > tbody");
+    const addButton = document.getElementById("addButton");
+    const formContainer = document.getElementById("formContainer");
+    const dataForm = document.getElementById("dataForm");
+    const cancel = document.getElementsByClassName("can")[0];
+    addButton.addEventListener("click", () => {
+      formContainer.style.display = "flex";
+    }); 
+    cancel.addEventListener("click", () => {
+      formContainer.style.display = "none";
+    });
+    dataForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const address = document.getElementById("address").value;
+      const city = document.getElementById("city").value;
+      const level = document.getElementById("level").value;
+      const weight = document.getElementById("weight").value;
+      const status = document.getElementById("status").value;
+      function generateRandomValue() {
+          return Math.floor(Math.random() * 100) + 1;
+      }
+
+      
+    var addressName = document.getElementById('address').value;
+    var values = {};
+
+    for (let i = 1; i <= 5; i++) {
+      values['value' + i] = generateRandomValue();
+    }
+
+    var dbRef = firebase.database().ref("Address");
+
+    
+    dbRef.child(addressName).once("value", function(snapshot) {
+      if (snapshot.exists()) {
+        dbRef.child(addressName).update(values)
+          .then(function() {
+            console.log("Address updated successfully!");
+          })
+          .catch(function(error) {
+            console.error("Error updating address: ", error);
+          });
+      } else {
+        dbRef.child(addressName).set(values)
+          .then(function() {
+            console.log("Address added successfully!");
+          })
+          .catch(function(error) {
+            console.error("Error adding address: ", error);
+          });
+      }
+    });
+  
+ 
+  
+      database.ref("sno_counter").transaction((currentSno) => {
+        return (currentSno || 0) + 1;
+      }, (error, committed, snapshot) => {
+        if (error) {
+          console.log("Error incrementing sno counter: " + error);
+        } else if (committed) {
+          const sno = snapshot.val();
+          const data = {
+            sno: sno,
+            Address: address,
+            City: city,
+            Level: level,
+            Weight: weight,
+            Status: status
+          };
+
+          database.ref("area_detail").push(data);
+        }
+      });
+
+      
+      dataForm.reset();
+      formContainer.style.display = "none";
+    });
+
+    const levelRef = database.ref("sensor/Level").on("value", (snapshot) => {
+  const levelValue = snapshot.val();
+
+  const levelNumber = parseFloat(levelValue);
+
+  database.ref('area_detail/-N_gwFw5Ls-ObVV3C3Tz').update({ Level: levelValue + "%", Weight: levelValue + "%" });
+
+  if (levelNumber > 75) {
+    database.ref('area_detail/-N_gwFw5Ls-ObVV3C3Tz').update({ Status: 'high' });
+  }
+  else if(levelNumber>=50 && levelNumber<=75 ){
+    database.ref('area_detail/-N_gwFw5Ls-ObVV3C3Tz').update({ Status: 'Medium' });
+
+  }
+  else{
+    database.ref('area_detail/-N_gwFw5Ls-ObVV3C3Tz').update({ Status: 'Low' });
+    
+  }
+});
+
+
+
+
+    let currAddr = ""
+    function fetchSensorData() {
+      database.ref("area_detail").on("value", (snapshot) => {
+        table.innerHTML = ""; 
+
+        snapshot.forEach((childSnapshot) => {
+          const data = childSnapshot.val();
+          const { sno, Address, City, Level, Weight, Status } = data;
+
+          const markup = `
+            <tr>
+              <td>${sno}</td>
+              <td class="address-cell">${Address}</td>
+              <td>${City}</td>
+              <td>${Level}</td>
+              <td>${Weight}</td>
+              <td>${Status}</td>
+            </tr>
+          `;
+
+          table.insertAdjacentHTML("beforeend", markup);
+          
+          const addressCells = document.querySelectorAll(".address-cell");
+         addressCells.forEach(cell => {
+         cell.addEventListener("click", () => {
+          const address = cell.textContent;
+          currAddr=address;
+          setTimeout(() => {
+            updateChart(`${address}`);
+          }, 20);
+        //  alert(`Clicked address: ${address}`);
+
+        scrollToTop();
+        });
+      });
+
+      function scrollToTop() {
+        const topAnchor = document.getElementById('top');
+        topAnchor.scrollIntoView({ behavior: 'smooth' });
+      }
+
+        });
+        
+      });
+    }
+
+    fetchSensorData();
+    cityDropdown.addEventListener("change", () => {
+      const selectedCity = cityDropdown.value;
+      filterTableByCity(selectedCity);
+    });
+
+    let barChart1, barChart2, barChart3,barChart4;
+
+    database.ref("Address").on("value",(list)=>{
+
+      updateChart(currAddr);
+   })
+  function updateChart(selectedCity) {
+    console.log(selectedCity);
+  const cityRef = database.ref(`Address/${selectedCity}`);
+  console.log(cityRef);
+  cityRef.once("value")
+    .then(snapshot => {
+      console.log("hi");
+      const data = snapshot.val();
+      const labels = Object.keys(data);
+      const values = Object.values(data);
+      
+      barChart1.data.labels = labels;
+      barChart1.data.datasets[0].data = values;
+      barChart1.update();
+
+      barChart2.data.labels = labels;
+      barChart2.data.datasets[0].data = values;
+      barChart2.update();
+
+      barChart3.data.labels = labels;
+      barChart3.data.datasets[0].data = values;
+      barChart3.update();
+      
+      
+    })
+    .catch(error => {
+      console.error("Error fetching data from Firebase:", error);
+    });
+}
+barChart1 = new Chart(barChartCanvas1, {
+  type: "bar",
+  data: {
+    labels: [],
+    datasets: [{
+      label: "Data",
+      backgroundColor: "rgba(75, 192, 192, 0.6)",
+      borderColor: "rgba(75, 192, 192, 1)",
+      borderWidth: 1,
+      data: []
+    }]
+  },
+  options: chartOptions
+});
+barChart2 = new Chart(barChartCanvas2, {
+  type: "bar",
+  data: {
+    labels: [],
+    datasets: [{
+      label: "Data",
+      backgroundColor: "rgba(75, 192, 192, 0.6)",
+      borderColor: "rgba(75, 192, 192, 1)",
+      borderWidth: 1,
+      data: []
+    }]
+  },
+  options: chartOptions
+});
+barChart3 = new Chart(barChartCanvas3, {
+  type: "bar",
+  data: {
+    labels: [],
+    datasets: [{
+      label: "Data",
+      backgroundColor: "rgba(75, 192, 192, 0.6)",
+      borderColor: "rgba(75, 192, 192, 1)",
+      borderWidth: 1,
+      data: []
+    }]
+  },
+  options: chartOptions
+});
+// barChart4 = new Chart(barChartCanvas4, {
+//   type: "bar",
+//   data: {
+//     labels: [],
+//     datasets: [{
+//       label: "Data",
+//       backgroundColor: "rgba(75, 192, 192, 0.6)",
+//       borderColor: "rgba(75, 192, 192, 1)",
+//       borderWidth: 1,
+//       data: []
+//     }]
+//   },
+//   options: chartOptions
+// });
+    const bin = document.getElementById("bin");
+    const percentage = document.getElementById("percentage");
+
+    function updateFillLevel(level) {
+      bin.style.height = level + "%";
+      percentage.textContent = level + "%";
+
+      bin.className = level >= 75 ? "red-fill" : "blue-fill";
+    }
+
+    function fetchbinlevel() {
+      const levelRef = database.ref("sensor/Level");
+
+      levelRef.on("value", (snapshot) => {
+        const level = snapshot.val();
+
+        if (level) {
+          updateFillLevel(level);
+        }
+      });
+    }
+
+    fetchbinlevel();
+const lineChartData = {
+            labels: ['Label 1', 'Label 2', 'Label 3', 'Label 4', 'Label 5'],
+            datasets: [{
+                label: 'Line Chart',
+                data: [20, 15, 25, 10, 30],
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2,
+                fill: false
+            }]
+        };
+const lineChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: {
+                        lineWidth: 2 
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        lineWidth: 2 
+                    }
+                }
+            }
+        };
+
+        // Create line chart
+        const lineChart = new Chart(document.getElementById('lineChart').getContext('2d'), {
+            type: 'line',
+            data: lineChartData,
+            options: lineChartOptions
+        });
+
+
+    
+  </script>
+</body>
+</html>

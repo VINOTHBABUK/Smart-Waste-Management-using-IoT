@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table Example</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .overlay{
+      inset: 0;
+      background-color: rgba(90, 90, 90, 0.281);
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .box{
+      background-color: white;
+      padding: 1rem;
+      width:25%;
+    }
+
+    form > div > *{
+      width: 100%;
+    }
+
+
+  </style>
+
+</head>
+<body>
+  <div class="overlay" style="display: none;">
+    <div class="box">
+      <h2>HTML Forms</h2>
+      <form>
+        <div>
+          <label for="fname">First name:</label><br>
+          <input type="text" name="Address"><br>
+        </div>
+        <div>
+          <label for="fname">First name:</label><br>
+          <input type="text" name="City"><br>
+        </div>
+        <div>
+          <label for="fname">First name:</label><br>
+          <input type="text" name="Level"><br>
+        </div>
+        <div>
+          <label for="fname">First name:</label><br>
+          <input type="text" name="Weight"><br>
+        </div>
+        <div>
+          <label for="fname">First name:</label><br>
+          <input type="text" name="Status"><br>
+        </div>
+        <button type="submit">Done</button>
+      </form> 
+    </div>
+  </div>
+  <h1>Data Table</h1>
+  <select id="cityDropdown" onchange="filterTable()">
+    <option value="">All Cities</option>
+    <option value="Kovilpatti">Kovilpatti</option>
+    <option value="Tirunelveli">Tirunelveli</option>
+  </select>
+<button id="butnAdd">Add</button>
+  <table>
+    <thead>
+      <tr>
+        <th>Sno</th>
+        <th>Address</th>
+        <th>City</th>
+        <th>Level</th>
+        <th>Weight</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+
+
+    </tbody>
+  </table>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+ <script type="module">
+
+
+  //   import { collection,getDocs,database,addDoc  } from './util.js'
+
+  //   const table = document.querySelector("table > tbody")
+
+  //   let prevLength = 0
+    
+  //   let records = []
+
+  //   async function fetchSensorData(){
+  //     const data = await getDocs(collection(database, "area_detail"));
+  //     let index = 0
+
+  //     prevLength = records.length
+  //     records = []
+
+      
+  //     data.forEach(doc =>  records.push(doc.data()) )
+
+      
+  //     if(prevLength === records.length) return
+
+  //     records.sort((a,b) => a.sid - b.sid)
+
+  //     // if(table.children.length != 0)
+  //     //     Array.from(table.children).forEach(row=>{
+           
+  //     //      const ele =  Array.from(row.children)
+
+  //     //       const { Address,City,Level,Weight,Status,sid } = records[index]
+
+  //     //         ele[0].innerText = sid
+  //     //         ele[1].innerText = Address
+  //     //         ele[2].innerText = City
+  //     //         ele[3].innerText = Level
+  //     //         ele[4].innerText = Weight
+  //     //         ele[5].innerText = Status
+
+  //     //         index++
+
+  //     //     })
+
+  //         records.slice(table.children.length).forEach(item=>{
+
+  //             const { Address,City,Level,Weight,Status,sid } = item
+
+  //             const markup = `
+  //             <tr>
+  //               <td>${sid}</td>
+  //               <td>${Address}</td>
+  //               <td>${City}</td>
+  //               <td>${Level}</td>
+  //               <td>${Weight}</td>
+  //               <td>${Status}</td>
+
+  //             </tr>
+  //           `
+
+  //           table.insertAdjacentHTML("beforeend",markup)
+  //         })
+
+
+  // }
+
+  // document.querySelector("form").addEventListener("submit", async function(e){
+  //   e.preventDefault()
+
+  //   const dataArr = [...new FormData(this)];
+  //   console.log(dataArr);
+  //   const data = Object.fromEntries(dataArr);
+  //   console.log(data);
+
+  //   let count = 0;
+    
+  //   const res = await getDocs(collection(database, "area_detail"));
+  //   res.forEach(doc =>  count++ )
+
+
+
+
+  //   await addDoc(collection(database,"area_detail"),{...data,sid:count+1})
+
+  //   document.querySelector(".overlay").style.display = "none"
+
+
+  // })
+
+  //   fetchSensorData()
+  //   // setInterval(fetchSensorData,3000) 
+
+     //document.querySelector("#butnAdd").addEventListener("click", ()=> document.querySelector(".overlay").style.display = "flex" )
+
+
+
+  
+
+    // Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCEsylIm412gqUfcc9gnPTMmHJbX0O0KaE",
+  authDomain: "dustbin-monitor-1102f.firebaseapp.com",
+  databaseURL: "https://dustbin-monitor-1102f-default-rtdb.firebaseio.com",
+  projectId: "dustbin-monitor-1102f",
+  storageBucket: "dustbin-monitor-1102f.appspot.com",
+  messagingSenderId: "5065718611",
+  appId: "1:5065718611:web:1aa84f7f92744a7f8e3fa6",
+  measurementId: "G-YGTVSNME62"
+
+};
+
+
+firebase.initializeApp(firebaseConfig);
+
+
+const database = firebase.database();
+
+const table = document.querySelector("table > tbody");
+
+function fetchSensorData() {
+  database.ref("area_detail").on("value", (snapshot) => {
+    const dataArray = [];
+    snapshot.forEach((childSnapshot) => {
+      const data = childSnapshot.val();
+      dataArray.push(data);
+    });
+
+    table.innerHTML = ""; // Clear the existing table rows
+
+    dataArray.reverse().forEach((data) => {
+      const { sno, Address, City, Level, Weight, Status } = data;
+
+      const markup = `
+        <tr>
+          <td>${sno}</td>
+          <td>${Address}</td>
+          <td>${City}</td>
+          <td>${Level}</td>
+          <td>${Weight}</td>
+          <td>${Status}</td>
+        </tr>
+      `;
+
+      table.insertAdjacentHTML("beforeend", markup);
+    });
+  });
+}
+
+fetchSensorData();
+
+document.querySelector("#butnAdd").addEventListener("click", ()=> document.querySelector(".overlay").style.display = "flex" )
+
+  </script> 
+
+</body>
+</html>
